@@ -1,29 +1,63 @@
+import { useEffect, useState, useContext } from "react";
+import { Link } from "react-router-dom";
+import { getProducts } from "../services/api";
+import { CartContext } from "../context/CartContext";
+
+// Static image imports for decorative sections
 import banner from "../assets/images/banner.jpg";
 import men from "../assets/images/men.jpg";
 import women from "../assets/images/women.jpg";
 import accessories from "../assets/images/accessories.jpg";
-import jacket from "../assets/images/jacket.jpg";
-import shoes from "../assets/images/shoes.jpg";
-import dress from "../assets/images/dress.jpg";
-import bag from "../assets/images/bag.jpg";
 import user1 from "../assets/images/user1.jpg";
 import user2 from "../assets/images/user2.jpg";
 import user3 from "../assets/images/user3.jpg";
 
 function Home() {
+    const [products, setProducts] = useState([]);
+    const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
+    const { addToCart, cart } = useContext(CartContext);
+
+    // Fetch products from API on page load
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const fetchProducts = async () => {
+        setLoading(true);
+        const data = await getProducts();
+        setProducts(data);
+        setLoading(false);
+    };
+
+    // Filter products by search query
+    const filteredProducts = products.filter((product) =>
+        product.title.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <div id="wrapper">
 
             {/* Navbar */}
             <nav id="navbar">
-                <h2>FASHIONISTA</h2>
+                <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+                    <h2>FASHIONISTA</h2>
+                </Link>
 
-                <input type="text" placeholder="Search for products..." />
+                <input
+                    type="text"
+                    placeholder="Search for products..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
 
                 <div id="navright">
-                    <button>Cart</button>
-                    <button>Profile</button>
-                    <button id="loginbtn">Login</button>
+                    <Link to="/cart">
+                        <button>🛒 Cart ({cart.length})</button>
+                    </Link>
+                    <Link to="/login">
+                        <button id="loginbtn">Login</button>
+                    </Link>
                 </div>
             </nav>
 
@@ -44,124 +78,58 @@ function Home() {
                 Flash Sale: Extra 20% OFF! Ends in 02:15:42
             </div>
 
-            {/* Main Section */}
-            <div id="main">
-
-                {/* Filters */}
-                <div id="filters">
-                    <h3>Filters</h3>
-
-                    <h4>Category</h4>
+            {/* Categories */}
+            <div id="categories">
+                <div className="categorybox">
+                    <img src={men} alt="men" />
                     <p>Men</p>
+                </div>
+
+                <div className="categorybox">
+                    <img src={women} alt="women" />
                     <p>Women</p>
+                </div>
+
+                <div className="categorybox">
+                    <img src={accessories} alt="accessories" />
                     <p>Accessories</p>
-
-                    <h4>Price</h4>
-                    <p>Under $50</p>
-                    <p>$50 - $100</p>
-                    <p>$100+</p>
-
-                    <h4>Color</h4>
-                    <p>Black</p>
-                    <p>White</p>
-                    <p>Blue</p>
-                </div>
-
-                {/* Products */}
-                <div id="products">
-
-                    {/* Categories */}
-                    <div id="categories">
-
-                        <div className="categorybox">
-                            <img src={men} alt="men" />
-                            <p>Men</p>
-                        </div>
-
-                        <div className="categorybox">
-                            <img src={women} alt="women" />
-                            <p>Women</p>
-                        </div>
-
-                        <div className="categorybox">
-                            <img src={accessories} alt="accessories" />
-                            <p>Accessories</p>
-                        </div>
-
-                    </div>
-
-                    {/* Product Cards */}
-                    <div id="productcards">
-
-                        <div className="card">
-                            <img src={jacket} alt="jacket" />
-                            <h3>Classic Denim Jacket</h3>
-                            <p>$79.99</p>
-                            <button>Add to Cart</button>
-                        </div>
-
-                        <div className="card">
-                            <img src={shoes} alt="shoes" />
-                            <h3>White Sneakers</h3>
-                            <p>$59.99</p>
-                            <button>Add to Cart</button>
-                        </div>
-
-                        <div className="card">
-                            <img src={dress} alt="dress" />
-                            <h3>Summer Dress</h3>
-                            <p>$49.99</p>
-                            <button>Add to Cart</button>
-                        </div>
-
-                        <div className="card">
-                            <img src={bag} alt="bag" />
-                            <h3>Leather Handbag</h3>
-                            <p>$120.00</p>
-                            <button>Add to Cart</button>
-                        </div>
-
-                    </div>
-
                 </div>
             </div>
 
-            {/* Best Sellers */}
-            <div id="bestsellers">
-                <h1>Best Sellers</h1>
+            {/* API Product Cards */}
+            <h2 style={{ textAlign: "center", marginTop: "30px" }}>Our Products</h2>
 
-                <div id="bestbox">
-
-                    <div className="card">
-                        <img src={jacket} alt="jacket" />
-                        <h3>Denim Jacket</h3>
-                        <p>$79.99</p>
-                        <button>Add to Cart</button>
-                    </div>
-
-                    <div className="card">
-                        <img src={shoes} alt="shoes" />
-                        <h3>White Sneakers</h3>
-                        <p>$59.99</p>
-                        <button>Add to Cart</button>
-                    </div>
-
-                    <div className="card">
-                        <img src={dress} alt="dress" />
-                        <h3>Summer Dress</h3>
-                        <p>$49.99</p>
-                        <button>Add to Cart</button>
-                    </div>
-
+            {loading ? (
+                <h2 style={{ textAlign: "center", padding: "40px" }}>Loading products...</h2>
+            ) : (
+                <div id="productcards">
+                    {filteredProducts.length === 0 ? (
+                        <h3>No products found.</h3>
+                    ) : (
+                        filteredProducts.map((product) => (
+                            <div className="card" key={product.id}>
+                                <Link to={`/product/${product.id}`}>
+                                    <img src={product.image} alt={product.title} />
+                                </Link>
+                                <h3>{product.title.substring(0, 30)}...</h3>
+                                <p>₹{(product.price * 85).toFixed(0)}</p>
+                                <Link to={`/product/${product.id}`}>
+                                    <button>View Details</button>
+                                </Link>
+                                <button onClick={() => addToCart(product)}>
+                                    Add to Cart
+                                </button>
+                            </div>
+                        ))
+                    )}
                 </div>
-            </div>
+            )}
 
             {/* Testimonials */}
             <div id="testimonials">
                 <h1>What Our Customers Say</h1>
 
                 <div id="testimonialbox">
-
                     <div className="review">
                         <img src={user1} alt="user1" />
                         <h3>Emily R.</h3>
@@ -179,7 +147,6 @@ function Home() {
                         <h3>Sophia L.</h3>
                         <p>Customer service was super helpful.</p>
                     </div>
-
                 </div>
             </div>
 

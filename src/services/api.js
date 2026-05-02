@@ -9,6 +9,7 @@ export const getProducts = async () => {
         return response.data;
     } catch (error) {
         console.log("Error fetching products:", error);
+        return [];
     }
 };
 
@@ -19,5 +20,6 @@ export const getSingleProduct = async (id) => {
         return response.data;
     } catch (error) {
         console.log("Error fetching product:", error);
+        return null;
     }
 };
