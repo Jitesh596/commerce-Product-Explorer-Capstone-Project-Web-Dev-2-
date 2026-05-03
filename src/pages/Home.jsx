@@ -132,19 +132,19 @@ function Home() {
                 <div id="testimonialbox">
                     <div className="review">
                         <img src={user1} alt="user1" />
-                        <h3>Emily R.</h3>
+                        <h3>Virat Kohli</h3>
                         <p>Absolutely love the quality and fast shipping!</p>
                     </div>
 
                     <div className="review">
                         <img src={user2} alt="user2" />
-                        <h3>James K.</h3>
+                        <h3>Sophia</h3>
                         <p>Great selection and amazing deals.</p>
                     </div>
 
                     <div className="review">
                         <img src={user3} alt="user3" />
-                        <h3>Sophia L.</h3>
+                        <h3>Rohit Sharma</h3>
                         <p>Customer service was super helpful.</p>
                     </div>
                 </div>
